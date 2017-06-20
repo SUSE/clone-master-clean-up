@@ -1,0 +1,133 @@
+.\"/* 
+.\" * All rights reserved
+.\" * Copyright (c) 2016 SUSE LINUX GmbH, Nuernberg, Germany.
+.\" * Authors: Howard Guo <hguo@suse.com>
+.\" *
+.\" * This program is free software; you can redistribute it and/or
+.\" * modify it under the terms of the GNU General Public License
+.\" * as published by the Free Software Foundation; either version 2
+.\" * of the License, or (at your option) any later version.
+.\" *
+.\" * This program is distributed in the hope that it will be useful,
+.\" * but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" * GNU General Public License for more details.
+.\" */
+.\" 
+.TH clone-master-clean-up "1" "May 2017" "" "Clean-Up For Cloning Preparation"
+.SH NAME
+clone\-master\-clean\-up - Clean up a system for cloning preparation.
+
+.SH OPTIONS
+The program does not accept command line options.
+
+.SH DESCRIPTION
+Clean up this system and delete all usage history for cloning preparation.
+
+Cleaning up an golden image highly depends on the stuff, which is installed and configured in this golden image and how the image is used.
+
+So it's a difference, if an golden image is used only for a fast and easy way to deploy an fresh installed base operating system (a so called plain vanilla image).
+.br
+Or if it is used during the life cycle management of a system or solution landscape, which normally includes additional installed services needed on all rolled-out systems later. Like additional installed software, e.g. for a backup solution or for special hardware support and monitoring, and system configurations, e.g. creation of additional local users, needed changes to 'sudoers', 'pam' or other configuration files or many other nice things.
+Additionally during a life cycle management there will be an very intensiv test cyclus of the new installed software and the configuration before the golden image is created and rolled out, so a lot more of log or temporary data files will exist.
+.br
+And that means, the parts, which need to be cleaned up, are different depending to the use cases and it will have contra-productive effects to remove some special files or directories.
+
+So for the first part (the operation system base installation) the clean ups of the tool 'clone-master-clean-up' will be sufficient.
+.br
+For a slightly better customizing of this part of the tool a configuration file in /etc/sysconfig is available (\fB/etc/sysconfig/clone-master-clean-up\fR). 
+.br
+Here you can configure the behavior concerning
+.RS 5
+/etc/sudoers is restored to original, and only root is allowed to run sudo.
+.RS 5
+default: no
+.RE
+clean up user ids >= 1000
+.RS 5 
+default: no
+.RE
+clean up all zypper repositories
+.RS 5
+default: no
+.RE
+remove btrf snapshots of root filesystem
+.RS 5
+default: yes
+.RE
+(If the system is running on EC2) Allow ec2-user to run sudo password-less.
+.RS 5
+default: no
+.RE
+.RE
+.PP
+For the second part (life cycle management) it's impossible to write a standard script, which will fit all various requirements. So a better way is to stay with the slight basic clean ups and pick up a vendor/customer specific drop-in file instead, which can contain the additional needed files and directories to clean up. 
+.PP
+See \fB/var/adm/clone-master-clean-up/custom_remove.template\fR for some more information and examples. Please copy the template file \fB/var/adm/clone-master-clean-up/custom_remove.template\fR to  \fB/var/adm/clone-master-clean-up/custom_remove\fR and un-comment the parts you need or add additional parts, which will fit your needs.
+.PP
+If the file \fB'/var/adm/clone-master-clean-up/custom_remove'\fR exists, all included files and directories will be picked up line by line and additionally removed from the golden image. So there is a simple way to enhance the functionality of the clean up script to the special needs.
+
+.SH "CLEAN UP ITEMS"
+The program asks for confirmation before proceeding with cleanup. If you proceed by typing "YES" and enter, the following locations/items will be cleaned up (or deleted):
+
+.IP \[bu]
+SUSE registration, all software repositories.
+.IP \[bu]
+SSH host keys, user SSH keys, user authorized keys, user shell history.
+.IP \[bu]
+User mails and user cron-jobs.
+.IP \[bu]
+Temporary files under /tmp and /var/tmp.
+.IP \[bu]
+Log files and archived log files under /var/log.
+.IP \[bu]
+Auto-generated HANA firewall configuration script.
+.IP \[bu]
+System random seeds.
+.IP \[bu]
+Systemd journal.
+.IP \[bu]
+Domain and host names.
+.IP \[bu]
+/etc/hostname, /etc/hosts, /etc/resolv.conf are restored to original.
+.IP \[bu]
+Persistent network interfaces (auto-generated 70-persistent-net.rules).
+.IP \[bu]
+YaST Firstboot is enabled if there is firstboot.xml.
+.IP \[bu]
+Give root user a new password, optionally.
+.IP \[bu]
+zypper anonymous ID
+.IP \[bu]
+clean up postfix
+.IP \[bu]
+swap the uuid strings with dev strings in /etc/fsta
+.IP \[bu]
+Clean up network files (except interfaces using dhcp boot protocol)
+.IP \[bu]
+Clean up collectd
+.IP \[bu]
+Clean up /root
+.IP \[bu]
+Clean up cache, crash and coredump
+
+.SH FILES
+.PP
+\fI/etc/sysconfig/clone-master-clean-up\fR
+.RS 4
+Defines the behaviour of clone-master-clean-up.
+.RE
+.PP
+\fI/var/adm/clone-master-clean-up/custom_remove.template\fR
+.RS 4
+Template for a vendor/customer specific drop-in file. Defines additional files and directories for clean up.
+.RE
+.PP
+\fI/var/adm/clone-master-clean-up/custom_remove\fR
+.RS 4
+\'Operation ready\' copy of the template file. If this file exists, clone-master-clean-up will remove the additional included files and directories.
+.RE
+
+.SH AUTHOR
+.NF
+Howard Guo <hguo@suse.com>, Angela Briel <abriel@suse.com>

@@ -1,0 +1,34 @@
+-------------------------------------------------------------------
+Mon May 15 12:40:20 UTC 2017 - abriel@suse.com
+
+- The following changes are made to accomplish FATE#322066
+  * remove some more files and directories (see man page for detailes)
+  * add clone-master-clean-up.sysconfig, to give the user the possibillity for minimal intervention
+  * add custom_remove.template to allow partner or customer specific removals
+
+-------------------------------------------------------------------
+Fri Jan 15 12:41:37 UTC 2016 - hguo@suse.com
+
+- The following issues are addressed:
+  * After wiping swap, the swap gets a new UUID, causing slow boot.
+  * 70-persistent-net.rules is not removed.
+  Along with several coding style and indentation fixes.
+  (bsc#961906)
+
+-------------------------------------------------------------------
+Thu Dec 10 15:12:07 UTC 2015 - varkoly@suse.com
+
+- according to comment from Berthold Gunreben in comment #18 in 
+- FATE#318965 Allow Clone-Master creation, the random-seed files 
+- need to be deleted, too
+
+-------------------------------------------------------------------
+Fri Oct 23 09:05:07 UTC 2015 - hguo@suse.com
+
+- Add clean up item: auto-generated HANA firewall script.
+
+-------------------------------------------------------------------
+Mon Sep 14 12:35:46 UTC 2015 - hguo@suse.com
+
+- Initial version, initial release.
+
