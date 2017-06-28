@@ -26,7 +26,7 @@ CMCU_ZYPP_REPOS="no"
 ## Type:        yesno
 ## Default:     "yes"
 #
-# remove btrf snapshots of root filesystem
+# remove btrfs snapshots of root filesystem
 CMCU_RSNAP="yes"
 
 ## Path:
