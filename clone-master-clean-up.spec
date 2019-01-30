@@ -1,7 +1,7 @@
 #
 # spec file for package clone-master-clean-up
 #
-# Copyright (c) 2017 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2017 SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -16,7 +16,7 @@
 #
 
 Name:           clone-master-clean-up
-Version:        1.2
+Version:        1.3
 Release:        0
 License:        GPL-2.0+
 Summary:        Clean up a system for cloning preparation
@@ -28,7 +28,13 @@ Source2:        sysconfig.clone-master-clean-up
 Source3:        custom_remove.template
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Requires:       systemd sed curl coreutils
+Requires(post): %fillup_prereq
 BuildArch:      noarch
+
+%if ! %{defined _fillupdir}
+  %define _fillupdir /var/adm/fillup-templates
+%endif
+
 
 %description
 Clean up a system for cloning preparation by cleaning up usage history and log files, etc.
@@ -44,11 +50,13 @@ install -m700 %{S:0} %{buildroot}/%{_sbindir}/clone-master-clean-up
 mkdir -p %{buildroot}%{_mandir}/man1
 install -m644 %{S:1} %{buildroot}/%{_mandir}/man1/clone-master-clean-up.1
 # sysconfig file
-mkdir -p %{buildroot}/%{_localstatedir}/adm/fillup-templates/
-install -m644 %{S:2} %{buildroot}/%{_localstatedir}/adm/fillup-templates/sysconfig.clone-master-clean-up
+mkdir -p %{buildroot}%{_fillupdir}
+install -m644 %{S:2} %{buildroot}/%{_fillupdir}/sysconfig.clone-master-clean-up
 # template
-mkdir -p %{buildroot}/%{_localstatedir}/adm/%{name}/
-install -m644 %{S:3} %{buildroot}/%{_localstatedir}/adm/%{name}/custom_remove.template
+mkdir -p %{buildroot}/%{_datadir}/%{name}/
+install -m644 %{S:3} %{buildroot}/%{_datadir}/%{name}/custom_remove.template
+# custom_remove file location
+mkdir -p %{buildroot}/%{_sysconfdir}/%{name}/
 
 %post
 %fillup_only -n clone-master-clean-up
@@ -57,7 +65,8 @@ install -m644 %{S:3} %{buildroot}/%{_localstatedir}/adm/%{name}/custom_remove.te
 %defattr(-,root,root)
 %{_sbindir}/*
 %{_mandir}/man1/*
-%config %{_localstatedir}/adm/fillup-templates/*
-%dir %{_localstatedir}/adm/%{name}
-%config %{_localstatedir}/adm/%{name}/custom_remove.template
-%ghost %config %{_localstatedir}/adm/%{name}/custom_remove
+%config %{_fillupdir}/*
+%dir %{_datadir}/%{name}
+%dir %{_sysconfdir}/%{name}
+%config %{_datadir}/%{name}/custom_remove.template
+%ghost %config %{_sysconfdir}/%{name}/custom_remove

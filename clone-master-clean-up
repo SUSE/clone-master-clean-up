@@ -4,8 +4,8 @@
 # Author: Howard Guo <hguo@suse.com>
 
 set -e
-
-DROP_IN_FILE=/var/adm/clone-master-clean-up/custom_remove
+# bsc#1092378
+DROP_IN_FILE=/etc/clone-master-clean-up/custom_remove
 SYSCONF_FILE=/etc/sysconfig/clone-master-clean-up
 
 err_exit() {
