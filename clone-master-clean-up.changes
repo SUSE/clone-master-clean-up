@@ -1,4 +1,21 @@
 -------------------------------------------------------------------
+Wed Jan  30 17:17:05 UTC 2019 - dakechi@suse.com
+
+- Moved the configuration files out of the /var directory
+  * Needed for compliance with transactional updates (bsc#1092378)
+
+-------------------------------------------------------------------
+Thu Feb  1 01:35:34 CET 2018 - ro@suse.de
+
+- Prepare for new fillup location
+
+-------------------------------------------------------------------
+Thu Jul  6 13:33:05 UTC 2017 - abriel@suse.com
+
+- The following changes are made to accomplish FATE#322066
+  * Fix typos and improve man page
+
+-------------------------------------------------------------------
 Mon May 15 12:40:20 UTC 2017 - abriel@suse.com
 
 - The following changes are made to accomplish FATE#322066

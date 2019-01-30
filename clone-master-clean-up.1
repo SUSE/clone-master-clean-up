@@ -67,9 +67,9 @@ default: no
 .PP
 For the use case of a life cycle management image, it's impossible to write a standard script which will fit all requirements. To enable this use case, clone-master-clean-up allows including a drop-in file containing paths to files and directories that are deleted in addition to doing the standard clean-ups.
 .PP
-For more information and examples, see \fB/var/adm/clone-master-clean-up/custom_remove.template\fR. Please copy the template file \fB/var/adm/clone-master-clean-up/custom_remove.template\fR to  \fB/var/adm/clone-master-clean-up/custom_remove\fR and un-comment the parts you need or add additional parts which will fit your needs.
+For more information and examples, see \fB/usr/share/clone-master-clean-up/custom_remove.template\fR. Please copy the template file \fB/usr/share/clone-master-clean-up/custom_remove.template\fR to  \fB/etc/clone-master-clean-up/custom_remove\fR and un-comment the parts you need or add additional parts which will fit your needs.
 .PP
-If the file \fB'/var/adm/clone-master-clean-up/custom_remove'\fR exists, all included files and directories will be picked up line by line and additionally removed from the golden image.
+If the file \fB'/etc/clone-master-clean-up/custom_remove'\fR exists, all included files and directories will be picked up line by line and additionally removed from the golden image.
 
 .SH "CLEANED UP ITEMS"
 The program asks for confirmation before proceeding with cleanup. If you proceed by typing "YES" and enter, the following locations/items will be cleaned up (or deleted):
@@ -122,12 +122,12 @@ Clean up cache, crash and coredump
 Defines the behavior of clone-master-clean-up.
 .RE
 .PP
-\fI/var/adm/clone-master-clean-up/custom_remove.template\fR
+\fI/usr/share/clone-master-clean-up/custom_remove.template\fR
 .RS 4
 Template for a vendor/customer-specific drop-in file. Defines additional files and directories to clean up.
 .RE
 .PP
-\fI/var/adm/clone-master-clean-up/custom_remove\fR
+\fI/etc/clone-master-clean-up/custom_remove\fR
 .RS 4
 \'Operation-ready\' copy of the template file. If this file exists, clone-master-clean-up will remove files and directories that are listed in it.
 .RE
