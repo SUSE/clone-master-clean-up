@@ -188,6 +188,10 @@ for intf in `ls -1 /etc/sysconfig/network/ifcfg-eth*`; do
         rm -rf $intf
     fi
 done
+if [ -d /var/lib/wicked ]; then
+    echo "Clean up persistent network data"
+    rm -rf /var/lib/wicked/*
+fi
 
 echo "Clean up collectd"
 rm -rf /var/lib/collectd/WebYaST/*
