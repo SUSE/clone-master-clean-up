@@ -16,7 +16,7 @@
 #
 
 Name:           clone-master-clean-up
-Version:        1.3
+Version:        1.4
 Release:        0
 License:        GPL-2.0+
 Summary:        Clean up a system for cloning preparation

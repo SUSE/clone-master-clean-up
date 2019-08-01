@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+Thu Aug  1 12:27:05 CET 2019 - eich@suse.com
+
+- Wicked stores a number of files containing unique IDs and DHCP data
+  in /var/lib/wicked/*. These files need to be removed for cloning:
+  if machines with identical settings exist in the same network
+  multiple times, IP addresses may change with each renewal
+  (bsc#1139667)
+
+-------------------------------------------------------------------
 Wed Jan  30 17:17:05 UTC 2019 - dakechi@suse.com
 
 - Moved the configuration files out of the /var directory
@@ -35,8 +44,8 @@ Fri Jan 15 12:41:37 UTC 2016 - hguo@suse.com
 -------------------------------------------------------------------
 Thu Dec 10 15:12:07 UTC 2015 - varkoly@suse.com
 
-- according to comment from Berthold Gunreben in comment #18 in 
-- FATE#318965 Allow Clone-Master creation, the random-seed files 
+- according to comment from Berthold Gunreben in comment #18 in
+- FATE#318965 Allow Clone-Master creation, the random-seed files
 - need to be deleted, too
 
 -------------------------------------------------------------------
