@@ -1,0 +1,9 @@
+<services>
+  <service name="obs_scm" mode="disabled">
+    <param name="scm">git</param>
+    <param name="url">https://github.com/SUSE/clone-master-clean-up.git</param>
+    <param name="version">HEAD</param>
+    <param name="exclude">.git</param>
+    <param name="extract">*</param>
+  </service>
+</services>

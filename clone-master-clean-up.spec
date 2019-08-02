@@ -22,7 +22,7 @@ License:        GPL-2.0+
 Summary:        Clean up a system for cloning preparation
 Url:            https://www.suse.com
 Group:          System/Management
-Source0:        clone-master-clean-up
+Source0:        clone-master-clean-up.sh
 Source1:        clone-master-clean-up.1
 Source2:        sysconfig.clone-master-clean-up
 Source3:        custom_remove.template

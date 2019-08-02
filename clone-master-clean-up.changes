@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Aug  2 13:08:25 UTC 2019 - Egbert Eich <eich@suse.com>
+
+- Add _service file to fetch package form git.
+  Add workaround for service osc_scm: avoid script to have the
+  same name repository.
+
+-------------------------------------------------------------------
 Thu Aug  1 12:27:05 CET 2019 - eich@suse.com
 
 - Wicked stores a number of files containing unique IDs and DHCP data
