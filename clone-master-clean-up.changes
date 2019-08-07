@@ -1,6 +1,7 @@
 -------------------------------------------------------------------
 Wed Aug  7 11:00:14 UTC 2019 - Egbert Eich <eich@suse.com>
 
+- Install README.md and license file, fix build warnings.
 - Fix _service-file:
   * Replace 'HEAD' version by 'master' branch:
     Right now, this project has just one single branch - track

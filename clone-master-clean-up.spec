@@ -26,6 +26,8 @@ Source0:        clone-master-clean-up.sh
 Source1:        clone-master-clean-up.1
 Source2:        sysconfig.clone-master-clean-up
 Source3:        custom_remove.template
+Source10:       LICENSE
+Source11:       README.md
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Requires:       systemd sed curl coreutils
 Requires(post): %fillup_prereq
@@ -42,6 +44,7 @@ Clean up a system for cloning preparation by cleaning up usage history and log f
 %prep
 
 %build
+cp %{S:10} %{S:11} .
 
 %install
 mkdir -p %{buildroot}%{_sbindir}
@@ -62,11 +65,12 @@ mkdir -p %{buildroot}/%{_sysconfdir}/%{name}/
 %fillup_only -n clone-master-clean-up
 
 %files
-%defattr(-,root,root)
+%doc %{basename:%{S:11}}
+%license %{basename:%{S:10}}
 %{_sbindir}/*
 %{_mandir}/man1/*
-%config %{_fillupdir}/*
+%{_fillupdir}/*
 %dir %{_datadir}/%{name}
 %dir %{_sysconfdir}/%{name}
-%config %{_datadir}/%{name}/custom_remove.template
+%{_datadir}/%{name}/custom_remove.template
 %ghost %config %{_sysconfdir}/%{name}/custom_remove
