@@ -71,12 +71,12 @@ for seed in /var/lib/systemd/random-seed /var/lib/misc/random-seed; do
 done
 
 echo 'Clearing systemd journal'
-pushd /etc/systemd
+pushd /etc/systemd > /dev/null
 cp journald.conf journald.conf.bak
 echo -e '\nSystemMaxUse=1K' >> journald.conf
 systemctl restart systemd-journald
 mv journald.conf.bak journald.conf
-popd
+popd > /dev/null
 
 echo 'Clearing systemd machine ID file'
 truncate -s 0 /etc/machine-id
