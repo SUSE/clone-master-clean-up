@@ -68,8 +68,8 @@ mkdir -p %{buildroot}/%{_sysconfdir}/%{name}/
 %fillup_only -n clone-master-clean-up
 
 %files
-%doc %{basename:%{S:11}}
-%license %{basename:%{S:10}}
+%doc README.md
+%license LICENSE
 %{_sbindir}/*
 %{_mandir}/man1/*
 %{_fillupdir}/*
