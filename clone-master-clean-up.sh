@@ -226,7 +226,7 @@ rm -rf /tmp/fstab.tmp
 
 echo "Clean up network files (except interfaces using dhcp boot protocol)"
 # additional files like bondig interfaces or vlans can be found in 
-# /var/adm/clone-master-clean-up/custom_remove.template
+# /usr/share/clone-master-clean-up/custom_remove.template
 for intf in `ls -1 /etc/sysconfig/network/ifcfg-eth*`; do
     bprot=`grep "^BOOTPROTO=" $intf | sed "s/^BOOTPROTO=//"`
     if ! [[ "$bprot" =~ dhcp ]]; then
