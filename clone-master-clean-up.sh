@@ -16,7 +16,10 @@ trap 'err_exit $LINENO' ERR
 
 [ "$UID" != "0" ] && echo 'Please run this program as root user.' && exit 1
 
-echo 'The script will delete all SSH keys, log data, and more. Type YES and enter to proceed.'
+echo -e 'The script will delete root SSH keys, log data, and more.\n' \
+     'WARNING: This should only be used on a pristine system\n' \
+     'WARNING: with no populated /home directories!\n' \
+     'Type YES and enter to proceed.'
 read -r answer
 [ "$answer" != "YES" ] && exit 1
 
@@ -234,7 +237,7 @@ fi
 rm -rf /tmp/fstab.tmp
 
 echo "Clean up network files (except interfaces using dhcp boot protocol)"
-# additional files like bondig interfaces or vlans can be found in 
+# additional files like bondig interfaces or vlans can be found in
 # /usr/share/clone-master-clean-up/custom_remove.template
 for intf in /etc/sysconfig/network/ifcfg-eth*; do
     bprot=$(grep "^BOOTPROTO=" "$intf" | sed "s/^BOOTPROTO=//")
