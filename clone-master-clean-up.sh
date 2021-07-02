@@ -4,6 +4,7 @@
 # Author: Howard Guo <hguo@suse.com>
 
 set -e
+shopt -s nullglob
 # bsc#1092378
 DROP_IN_FILE=/etc/clone-master-clean-up/custom_remove
 SYSCONF_FILE=/etc/sysconfig/clone-master-clean-up
@@ -22,6 +23,14 @@ echo -e 'The script will delete root SSH keys, log data, and more.\n' \
      'Type YES and enter to proceed.'
 read -r answer
 [ "$answer" != "YES" ] && exit 1
+
+if [ -n "$(echo /home/*/.ssh/* /home/*/.*_history)" ]; then
+    echo -e 'There seem to be populated /home directories on this system\n' \
+	 'Cloning such systems is not recommended.\n' \
+	 'Type YES if you still would like to proceed.'
+    read answer
+    [ "$answer" != "YES" ] && exit 1
+fi
 
 # source config file
 if [ -r "$SYSCONF_FILE" ]; then
@@ -49,7 +58,7 @@ echo "Removing zypper anonymous ID"
 rm -rf /var/lib/zypp/AnonymousUniqueId
 
 echo 'Removing SSH host keys, user SSH keys, authorized keys, and shell history'
-rm -rf /etc/ssh/ssh_host*key* /root/.ssh/* /home/*/.ssh/* /home/*/.*_history &> /dev/null
+rm -rf /etc/ssh/ssh_host*key* /root/.ssh/*  &> /dev/null
 
 echo 'Removing all mails and cron-jobs'
 rm -rf /var/spool/mail/*
