@@ -26,8 +26,8 @@ read -r answer
 
 if [ -n "$(echo /home/*/.ssh/* /home/*/.*_history)" ]; then
     echo -e 'There seem to be populated /home directories on this system\n' \
-	 'Cloning such systems is not recommended.\n' \
-	 'Type YES if you still would like to proceed.'
+         'Cloning such systems is not recommended.\n' \
+         'Type YES if you still would like to proceed.'
     read answer
     [ "$answer" != "YES" ] && exit 1
 fi
@@ -57,7 +57,7 @@ find /etc/zypp \( -iname 'suse*' -o -iname 'scc*' \) -delete
 echo "Removing zypper anonymous ID"
 rm -rf /var/lib/zypp/AnonymousUniqueId
 
-echo 'Removing SSH host keys, user SSH keys, authorized keys, and shell history'
+echo 'Removing SSH host keys, root user SSH keys, authorized keys, and shell history'
 rm -rf /etc/ssh/ssh_host*key* /root/.ssh/*  &> /dev/null
 
 echo 'Removing all mails and cron-jobs'
@@ -67,23 +67,21 @@ rm -rf /var/spool/cron/{lastrun,tabs}/*
 echo "Clean up postfix"
 for i in /var/spool/postfix/{active,corrupt,deferred,hold,maildrop,saved,bounce,defer,flush,incoming,trace}; do
     # descend following symlink and check if it was symlink, if not, recursively delete entries in this directory. 'rm -rf' doesn't follow symlinks.
-    cd -P $i
-    if [ "$i" = "${pwd}" ]; then
-	info=( $(stat --printf="%u %g" ".") )
-	owner=${info[0]}
-	group=${info[1]}
-	setpriv --clear-groups --reuid $owner --regid $group rm -rf *
-    fi
+    cd -P "$i"
+    [ "$i" != "$PWD" ] && continue
+    info=( $(stat --printf="%u %g" ".") )
+    owner=${info[0]}
+    group=${info[1]}
+    setpriv --clear-groups --reuid "$owner" --regid "$group" rm -rf ./*
 done
-
-rm -rf /var/spool/postfix/{active,corrupt,deferred,hold,maildrop,saved,bounce,defer,flush,incoming,trace}/*
 
 echo 'Removing all temporary files'
 rm -rf /tmp/* /tmp/.* /var/tmp/* /var/tmp/.* &> /dev/null || true
 
-echo 'Clearing log files and removing log archives'
-find /var/log -type f -exec truncate -s 0 {} \;
+echo 'Removing log archives'
 find /var/log \( -iname '*.old' -o -iname '*.xz' -o -iname '*.gz' \) -delete
+echo 'Clearing log files'
+find /var/log -type f -exec truncate -s 0 {} \;
 
 echo 'Clearing HANA firewall script'
 rm -rf /etc/hana-firewall.d/generated_hana_firewall_script
