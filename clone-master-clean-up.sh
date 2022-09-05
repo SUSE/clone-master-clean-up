@@ -4,6 +4,7 @@
 # Author: Howard Guo <hguo@suse.com>
 
 set -e
+shopt -s nullglob
 # bsc#1092378
 DROP_IN_FILE=/etc/clone-master-clean-up/custom_remove
 SYSCONF_FILE=/etc/sysconfig/clone-master-clean-up
@@ -16,9 +17,20 @@ trap 'err_exit $LINENO' ERR
 
 [ "$UID" != "0" ] && echo 'Please run this program as root user.' && exit 1
 
-echo 'The script will delete all SSH keys, log data, and more. Type YES and enter to proceed.'
+echo -e 'The script will delete root SSH keys, log data, and more.\n' \
+     'WARNING: This should only be used on a pristine system\n' \
+     'WARNING: with no populated /home directories!\n' \
+     'Type YES and enter to proceed.'
 read -r answer
 [ "$answer" != "YES" ] && exit 1
+
+if [ -n "$(echo /home/*/.ssh/* /home/*/.*_history)" ]; then
+    echo -e 'There seem to be populated /home directories on this system\n' \
+         'Cloning such systems is not recommended.\n' \
+         'Type YES if you still would like to proceed.'
+    read answer
+    [ "$answer" != "YES" ] && exit 1
+fi
 
 # source config file
 if [ -r "$SYSCONF_FILE" ]; then
@@ -45,22 +57,31 @@ find /etc/zypp \( -iname 'suse*' -o -iname 'scc*' \) -delete
 echo "Removing zypper anonymous ID"
 rm -rf /var/lib/zypp/AnonymousUniqueId
 
-echo 'Removing SSH host keys, user SSH keys, authorized keys, and shell history'
-rm -rf /etc/ssh/ssh_host*key* /root/.ssh/* /home/*/.ssh/* /home/*/.*_history &> /dev/null
+echo 'Removing SSH host keys, root user SSH keys, authorized keys, and shell history'
+rm -rf /etc/ssh/ssh_host*key* /root/.ssh/*  &> /dev/null
 
 echo 'Removing all mails and cron-jobs'
 rm -rf /var/spool/mail/*
 rm -rf /var/spool/cron/{lastrun,tabs}/*
 
 echo "Clean up postfix"
-rm -rf /var/spool/postfix/{active,corrupt,deferred,hold,maildrop,saved,bounce,defer,flush,incoming,trace}/*
+for i in /var/spool/postfix/{active,corrupt,deferred,hold,maildrop,saved,bounce,defer,flush,incoming,trace}; do
+    # descend following symlink and check if it was symlink, if not, recursively delete entries in this directory. 'rm -rf' doesn't follow symlinks.
+    cd -P "$i"
+    [ "$i" != "$PWD" ] && continue
+    info=( $(stat --printf="%u %g" ".") )
+    owner=${info[0]}
+    group=${info[1]}
+    setpriv --clear-groups --reuid "$owner" --regid "$group" rm -rf ./*
+done
 
 echo 'Removing all temporary files'
 rm -rf /tmp/* /tmp/.* /var/tmp/* /var/tmp/.* &> /dev/null || true
 
-echo 'Clearing log files and removing log archives'
-find /var/log -type f -exec truncate -s 0 {} \;
+echo 'Removing log archives'
 find /var/log \( -iname '*.old' -o -iname '*.xz' -o -iname '*.gz' \) -delete
+echo 'Clearing log files'
+find /var/log -type f -exec truncate -s 0 {} \;
 
 echo 'Clearing HANA firewall script'
 rm -rf /etc/hana-firewall.d/generated_hana_firewall_script
@@ -234,7 +255,7 @@ fi
 rm -rf /tmp/fstab.tmp
 
 echo "Clean up network files (except interfaces using dhcp boot protocol)"
-# additional files like bondig interfaces or vlans can be found in 
+# additional files like bondig interfaces or vlans can be found in
 # /usr/share/clone-master-clean-up/custom_remove.template
 for intf in /etc/sysconfig/network/ifcfg-eth*; do
     bprot=$(grep "^BOOTPROTO=" "$intf" | sed "s/^BOOTPROTO=//")

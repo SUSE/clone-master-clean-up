@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Aug 30 15:02:45 UTC 2022 - abriel@suse.com
+
+- Bump version to 1.7
+- CVE-2021-32000: fix some potentially dangerous file system
+  operations
+  (bsc#1181050)
+
+-------------------------------------------------------------------
 Wed Aug 12 15:44:30 UTC 2020 - abriel@suse.com
 
 - Bump version to 1.6
