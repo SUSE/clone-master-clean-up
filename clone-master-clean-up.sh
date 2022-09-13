@@ -142,8 +142,8 @@ echo 'Enabling YaST Firstboot if necessary'
 if [ "$CMCU_RSNAP" = "yes" ]; then
   if [ -d /.snapshots ]; then
     echo "Removing all pre/post btrfs snapshots from /.snapshot"
-    snapper list | gawk '{if($3=="pre") print "/usr/bin/snapper delete --sync " $1; }'  | /bin/bash
-    snapper list | gawk '{if($3=="post") print "/usr/bin/snapper delete --sync " $1; }' | /bin/bash
+    snapper list --columns number,type | gawk '{if($3=="pre")  print "/usr/bin/snapper delete --sync " $1; }' | /bin/bash
+    snapper list --columns number,type | gawk '{if($3=="post") print "/usr/bin/snapper delete --sync " $1; }' | /bin/bash
   fi
 fi
 
