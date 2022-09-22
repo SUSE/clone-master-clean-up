@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Thu Sep 22 09:08:16 UTC 2022 - Peter Varkoly <varkoly@suse.com>
+
+- Bump version to 1.8
+- clone-master-clean-up fails to remove btrfs snapshots
+  (bsc#1203651)
+
+-------------------------------------------------------------------
 Tue Aug 30 15:02:45 UTC 2022 - abriel@suse.com
 
 - Bump version to 1.7
