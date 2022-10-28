@@ -66,13 +66,15 @@ rm -rf /var/spool/cron/{lastrun,tabs}/*
 
 echo "Clean up postfix"
 for i in /var/spool/postfix/{active,corrupt,deferred,hold,maildrop,saved,bounce,defer,flush,incoming,trace}; do
-    # descend following symlink and check if it was symlink, if not, recursively delete entries in this directory. 'rm -rf' doesn't follow symlinks.
-    cd -P "$i"
-    [ "$i" != "$PWD" ] && continue
-    info=( $(stat --printf="%u %g" ".") )
-    owner=${info[0]}
-    group=${info[1]}
-    setpriv --clear-groups --reuid "$owner" --regid "$group" rm -rf ./*
+    if [ -d "$i" ]; then
+        # descend following symlink and check if it was symlink, if not, recursively delete entries in this directory. 'rm -rf' doesn't follow symlinks.
+        cd -P "$i"
+        [ "$i" != "$PWD" ] && continue
+        info=( $(stat --printf="%u %g" ".") )
+        owner=${info[0]}
+        group=${info[1]}
+        setpriv --clear-groups --reuid "$owner" --regid "$group" rm -rf ./*
+    fi
 done
 
 echo 'Removing all temporary files'
