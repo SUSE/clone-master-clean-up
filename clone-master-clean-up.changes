@@ -1,4 +1,11 @@
 -------------------------------------------------------------------
+Fri Oct 28 11:41:37 UTC 2022 - Peter Varkoly <varkoly@suse.com>
+
+- Bump version to 1.10
+- clone-master-clean-up fails if postfix is not installed (bsc#1204835)
+  Check if the directory does exists.
+
+-------------------------------------------------------------------
 Fri Sep 23 14:49:49 UTC 2022 - Peter Varkoly <varkoly@suse.com>
 
 - Bump version to 1.9
