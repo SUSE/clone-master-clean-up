@@ -68,7 +68,7 @@ echo "Clean up postfix"
 for i in /var/spool/postfix/{active,corrupt,deferred,hold,maildrop,saved,bounce,defer,flush,incoming,trace}; do
     if [ -d "$i" ]; then
         # descend following symlink and check if it was symlink, if not, recursively delete entries in this directory. 'rm -rf' doesn't follow symlinks.
-        cd -P "$i"
+        test -d "$i" && cd -P "$i"
         [ "$i" != "$PWD" ] && continue
         info=( $(stat --printf="%u %g" ".") )
         owner=${info[0]}
