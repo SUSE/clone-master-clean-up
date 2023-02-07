@@ -290,8 +290,10 @@ if [ -r "$DROP_IN_FILE" ]; then
     done < $DROP_IN_FILE
 fi
 
-echo 'Clean up initiatorname.iscsi'
-sed -i '/^[^#]/d' /etc/iscsi/initiatorname.iscsi
+if [ -e /etc/iscsi/initiatorname.iscsi ]; then
+    echo 'Clean up initiatorname.iscsi'
+    sed -i '/^[^#]/d' /etc/iscsi/initiatorname.iscsi
+fi
 
 echo 'Finished. The system is now sparkling clean. Feel free to shut it down and image it.'
 
