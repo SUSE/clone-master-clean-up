@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+Tue Feb  7 12:26:43 UTC 2023 - Peter Varkoly <varkoly@suse.com>
+
+- Bump version to 1.11
+- clone-master-clean-up fails when /etc/iscsi/initiatorname.iscsi doesn't exist
+  The entire section is wrapped in a test for the existence of this file.
+  (bsc#1207993)
+
+-------------------------------------------------------------------
 Fri Oct 28 11:41:37 UTC 2022 - Peter Varkoly <varkoly@suse.com>
 
 - Bump version to 1.10
