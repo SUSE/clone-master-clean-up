@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # The script cleans up a system for cloning preparation.
+# Author: Peter Varkoly <varkoly@suse.com>
 # Author: Howard Guo <hguo@suse.com>
 
 set -e
@@ -15,21 +16,44 @@ err_exit() {
 }
 trap 'err_exit $LINENO' ERR
 
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -n|--dont-ask)
+            DONT_ASK="YES"
+            shift
+            ;;
+        -f|--dont-change-fstab)
+            DONT_CHANGE_FSTAB="YES"
+            shift
+            ;;
+        -h|--help)
+            echo -e 'Usage: clone-master-clean-up.sh [OPTION..]  \n' \
+                    '  -n, --dont-ask           Do not ask any questions. Run the program with default values even it is not recommended.\n' \
+                    '                           The root password will also be retained.\n' \
+                    '  -f, --dont-change-fstab  Do not swap UUID and label into device name in fstab.\n'
+            exit
+    esac
+done
+
 [ "$UID" != "0" ] && echo 'Please run this program as root user.' && exit 1
 
-echo -e 'The script will delete root SSH keys, log data, and more.\n' \
-     'WARNING: This should only be used on a pristine system\n' \
-     'WARNING: with no populated /home directories!\n' \
-     'Type YES and enter to proceed.'
-read -r answer
-[ "$answer" != "YES" ] && exit 1
-
-if [ -n "$(echo /home/*/.ssh/* /home/*/.*_history)" ]; then
-    echo -e 'There seem to be populated /home directories on this system\n' \
-         'Cloning such systems is not recommended.\n' \
-         'Type YES if you still would like to proceed.'
-    read answer
+if [ "${DONT_ASK}" != "YES" ]; then
+    echo -e 'The script will delete root SSH keys, log data, and more.\n' \
+         'WARNING: This should only be used on a pristine system\n' \
+         'WARNING: with no populated /home directories!\n' \
+         'Type YES and enter to proceed.'
+    read -r answer
     [ "$answer" != "YES" ] && exit 1
+fi
+
+if [ "${DONT_ASK}" != "YES" ]; then
+    if [ -n "$(echo /home/*/.ssh/* /home/*/.*_history)" ]; then
+        echo -e 'There seem to be populated /home directories on this system\n' \
+                'Cloning such systems is not recommended.\n' \
+                'Type YES if you still would like to proceed.'
+        read answer
+        [ "$answer" != "YES" ] && exit 1
+    fi
 fi
 
 # source config file
@@ -209,10 +233,11 @@ root ALL=(ALL) ALL
 EOF
 fi
 
-echo 'Would you like to give root user a new password? Type YES to set a new password, otherwise simply press Enter.'
-read -r answer
-[ "$answer" == "YES" ] && passwd root
-
+if [ "${DONT_ASK}" != "YES" ]; then
+    echo 'Would you like to give root user a new password? Type YES to set a new password, otherwise simply press Enter.'
+    read -r answer
+    [ "$answer" == "YES" ] && passwd root
+fi
 if [ "$CMCU_EC2" = "yes" ]; then
     if curl --connect-timeout 3 '169.254.169.254/latest' &> /dev/null; then
        echo 'EC2 specific: allowing ec2-user to run sudo'
@@ -230,28 +255,30 @@ if [ "$CMCU_USERIDS" = "yes" ]; then
     done
 fi
 
-echo "swap the uuid strings with dev strings in /etc/fstab"
-> /tmp/fstab.tmp
-while read -r disk remain; do
-    case "$disk" in
-    UUID=*)
+if [ "${DONT_CHANGE_FSTAB}" != "YES" ]; then
+    echo "swap the uuid strings with dev strings in /etc/fstab"
+    > /tmp/fstab.tmp
+    while read -r disk remain; do
+        case "$disk" in
+        UUID=*)
         uuid=${disk#UUID=}
         new_disk=$(/usr/sbin/blkid -U "$uuid")
-        ;;
-    LABEL=*)
-        label=${disk#LABEL=}
-        new_disk=$(/usr/sbin/blkid -L "$label")
-        ;;
-    *)
+    ;;
+       LABEL=*)
+       label=${disk#LABEL=}
+       new_disk=$(/usr/sbin/blkid -L "$label")
+    ;;
+        *)
         new_disk="$disk"
-        ;;
-    esac
-    echo "$new_disk $remain" >> /tmp/fstab.tmp
-done < /etc/fstab
-if [ -s /tmp/fstab.tmp ]; then
-    cp /tmp/fstab.tmp /etc/fstab
+    ;;
+        esac
+        echo "$new_disk $remain" >> /tmp/fstab.tmp
+    done < /etc/fstab
+    if [ -s /tmp/fstab.tmp ]; then
+        cp /tmp/fstab.tmp /etc/fstab
+    fi
+    rm -rf /tmp/fstab.tmp
 fi
-rm -rf /tmp/fstab.tmp
 
 echo "Clean up network files (except interfaces using dhcp boot protocol)"
 # additional files like bondig interfaces or vlans can be found in
