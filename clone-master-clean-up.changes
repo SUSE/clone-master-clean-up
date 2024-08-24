@@ -1,4 +1,14 @@
 -------------------------------------------------------------------
+Sat Aug 24 08:34:04 UTC 2024 - Peter Varkoly <varkoly@suse.com>
+
+- clone-master-clean-up modifies fstab from UUID to /dev/sdx. (bsc#1229217)
+  Introduce two command line parameters:
+       -n, --dont-ask suppresses all requests.
+       -f, --dont-change-fstab  Do not swap UUID and label into device name in fstab.
+  Without this parameters it behaves as usual.
+- 1.13 
+
+-------------------------------------------------------------------
 Tue Mar 19 06:28:29 UTC 2024 - Peter Varkoly <varkoly@suse.com>
 
 - Error message about 'journald.conf' (bsc#1221533)
