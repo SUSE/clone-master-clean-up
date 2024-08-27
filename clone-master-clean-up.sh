@@ -44,9 +44,7 @@ if [ "${DONT_ASK}" != "YES" ]; then
          'Type YES and enter to proceed.'
     read -r answer
     [ "$answer" != "YES" ] && exit 1
-fi
 
-if [ "${DONT_ASK}" != "YES" ]; then
     if [ -n "$(echo /home/*/.ssh/* /home/*/.*_history)" ]; then
         echo -e 'There seem to be populated /home directories on this system\n' \
                 'Cloning such systems is not recommended.\n' \
@@ -261,16 +259,16 @@ if [ "${DONT_CHANGE_FSTAB}" != "YES" ]; then
     while read -r disk remain; do
         case "$disk" in
         UUID=*)
-        uuid=${disk#UUID=}
-        new_disk=$(/usr/sbin/blkid -U "$uuid")
-    ;;
-       LABEL=*)
-       label=${disk#LABEL=}
-       new_disk=$(/usr/sbin/blkid -L "$label")
-    ;;
+            uuid=${disk#UUID=}
+            new_disk=$(/usr/sbin/blkid -U "$uuid")
+        ;;
+        LABEL=*)
+            label=${disk#LABEL=}
+            new_disk=$(/usr/sbin/blkid -L "$label")
+        ;;
         *)
-        new_disk="$disk"
-    ;;
+            new_disk="$disk"
+        ;;
         esac
         echo "$new_disk $remain" >> /tmp/fstab.tmp
     done < /etc/fstab
