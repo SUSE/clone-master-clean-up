@@ -14,12 +14,17 @@
 .\" * GNU General Public License for more details.
 .\" */
 .\" 
-.TH clone-master-clean-up "1" "September 2022" "" "Clean-Up For Cloning Preparation"
+.TH clone-master-clean-up "1" "September 2024" "" "Clean-Up For Cloning Preparation"
 .SH NAME
-clone\-master\-clean\-up - Clean up a system for cloning preparation.
+clone\-master\-clean\-up [OPTIONS] - Clean up a system for cloning preparation.
 
 .SH OPTIONS
-The program does not accept command line options.
+.IP "\fB\-n, \-\-dont\-ask\fR"
+Do not ask any questions. Run the program with default values even it is not recommended. The root password will also be retained.
+.IP "\fb\-f, \-\-dont\-change\-fstab\fR"
+Do not swap UUID and label into device name in fstab.
+.IP "\fb\-h, \-\-help\fR"
+Print a usage message to stdout and exit successfully.
 
 .SH DESCRIPTION
 Clean up a system and delete all usage history to prepare it for being cloned.
@@ -140,4 +145,4 @@ Template for a vendor/customer-specific drop-in file. Defines additional files a
 
 .SH AUTHOR
 .NF
-Howard Guo <hguo@suse.com>, Angela Briel <abriel@suse.com>
+Howard Guo <hguo@suse.com>, Angela Briel <abriel@suse.com>, Peter Varkoly <varkoly@suse.com>
